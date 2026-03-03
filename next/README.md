@@ -1,45 +1,59 @@
-# 🌟 Next.js Multilingual Blog Template
+# Next
 
-Welcome to our cutting-edge Next.js Multilingual Blog Template! This powerful and flexible template is designed to help you create stunning, multilingual blogs with ease.
+This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 19.2.22.
 
-## ✨ Features
+## Development server
 
-- 🌐 Multilingual support (English and French)
-- 📱 Fully responsive design
-- 🎨 Customizable themes
-- 🖼️ Image optimization
-- 🔍 SEO-friendly
-- 🚀 Fast performance with Next.js
+To start a local development server, run:
 
-## 🚀 Getting Started
+```bash
+ng serve
+```
 
-1. Clone this repository
-2. Install dependencies: `npm install`
-3. Copy `.env.example` to `.env.local` and update the variables
-4. Run the development server: `npm run dev`
-5. Open [http://localhost:3000](http://localhost:3000) in your browser
+Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
 
-## 🛠️ Customization
+## Code scaffolding
 
-- Modify `config.ts` to change language settings
-- Update `next.config.mjs` for advanced configurations
-- Add your own MDX files in the `blog` page directly
+Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
 
-## 🤝 Contributing
+```bash
+ng generate component component-name
+```
 
-We welcome contributions! Please see our [contributing guidelines](link-to-contributing-guidelines) for more information.
+For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
 
-## 📄 License
+```bash
+ng generate --help
+```
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+## Building
 
----
+To build the project run:
 
-<footer>
-<p align="center">
-  Made by <a href="https://aceternity.com">Aceternity</a><br>
-  Powered by <a href="https://nextjs.org/">Next.js</a> | <a href="https://tailwindcss.com/">Tailwind CSS</a> | <a href="https://framer.com/motion">Framer Motion</a> | <a href="https://ui.aceternity.com">Aceternity UI</a>
-</p>
-</footer>
+```bash
+ng build
+```
 
-++ Deploy
+This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
+
+## Running unit tests
+
+To execute unit tests with the [Karma](https://karma-runner.github.io) test runner, use the following command:
+
+```bash
+ng test
+```
+
+## Running end-to-end tests
+
+For end-to-end (e2e) testing, run:
+
+```bash
+ng e2e
+```
+
+Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
+
+## Additional Resources
+
+For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.

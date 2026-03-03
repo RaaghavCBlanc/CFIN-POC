@@ -7,9 +7,7 @@ const {
 
 const config: Config = {
   content: [
-    './pages/**/*.{js,ts,jsx,tsx,mdx}',
-    './components/**/*.{js,ts,jsx,tsx,mdx}',
-    './app/**/*.{js,ts,jsx,tsx,mdx}',
+    './src/**/*.{html,ts}',
   ],
   theme: {
     extend: {
@@ -22,7 +20,7 @@ const config: Config = {
       boxShadow: {
         derek: `0px 0px 0px 1px rgb(0 0 0 / 0.06),
         0px 1px 1px -0.5px rgb(0 0 0 / 0.06),
-        0px 3px 3px -1.5px rgb(0 0 0 / 0.06), 
+        0px 3px 3px -1.5px rgb(0 0 0 / 0.06),
         0px 6px 6px -3px rgb(0 0 0 / 0.06),
         0px 12px 12px -6px rgb(0 0 0 / 0.06),
         0px 24px 24px -12px rgb(0 0 0 / 0.06)`,
@@ -36,6 +34,8 @@ const config: Config = {
       animation: {
         move: 'move 5s linear infinite',
         'spin-circle': 'spin-circle 3s linear infinite',
+        'marquee': 'marquee 30s linear infinite',
+        'marquee-reverse': 'marquee-reverse 30s linear infinite',
       },
       keyframes: {
         move: {
@@ -45,6 +45,14 @@ const config: Config = {
         'spin-circle': {
           '0%': { transform: 'rotate(0deg)' },
           '100%': { transform: 'rotate(360deg)' },
+        },
+        'marquee': {
+          '0%': { transform: 'translateX(0%)' },
+          '100%': { transform: 'translateX(-50%)' },
+        },
+        'marquee-reverse': {
+          '0%': { transform: 'translateX(-50%)' },
+          '100%': { transform: 'translateX(0%)' },
         },
       },
     },
