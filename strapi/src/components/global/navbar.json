@@ -11,17 +11,26 @@
       "relation": "oneToOne",
       "target": "api::logo.logo"
     },
-    "left_navbar_items": {
-      "displayName": "Left_Navbar_Items",
+    "top_navbar": {
       "type": "component",
+      "component": "items.top-navbar-items",
       "repeatable": true,
-      "component": "shared.link"
+      "required": true
     },
-    "right_navbar_items": {
-      "displayName": "Right_Navbar_Items",
+    "bottom_navbar": {
       "type": "component",
+      "component": "items.bottom-navbar-items",
       "repeatable": true,
-      "component": "shared.link"
+      "required": true
+    },
+    "show_search": {
+      "type": "boolean",
+      "required": true,
+      "default": true
+    },
+    "search_placeholder": {
+      "type": "string",
+      "default": "search our site"
     }
   }
 }

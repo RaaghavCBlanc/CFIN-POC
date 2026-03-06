@@ -1,6 +1,6 @@
 import { Component, Input, signal, computed, OnInit } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { format } from 'date-fns';
+import { format, formatDistanceToNow } from 'date-fns';
 import { truncate } from '../utils/utils';
 
 @Component({
@@ -8,49 +8,66 @@ import { truncate } from '../utils/utils';
   standalone: true,
   imports: [RouterLink],
   template: `
-    <div class="w-full py-20">
-      <div class="flex sm:flex-row flex-col justify-between gap-4 items-center mb-10">
-        <p class="text-2xl font-bold text-white">More Posts</p>
+    <div class="w-full">
+      <!-- Search (right-aligned) -->
+      <div class="flex justify-end mb-6">
         <input
           type="text"
           [value]="search()"
           (input)="onSearch($event)"
           placeholder="Search articles"
-          class="text-sm min-w-full sm:min-w-96 p-2 rounded-md bg-neutral-800 border-none focus:ring-0 focus:outline-none outline-none text-neutral-200 placeholder-neutral-400"
+          class="text-sm w-full sm:w-72 px-3 py-1.5 rounded border border-gray-300 focus:ring-1 focus:ring-[#7a9e8e] focus:outline-none text-gray-800 placeholder-gray-400"
         />
       </div>
 
-      <div class="divide-y divide-neutral-800">
+      <div class="divide-y divide-gray-200">
         @if (filteredResults().length === 0) {
-          <p class="text-neutral-400 text-center p-4">No results found</p>
+          <p class="text-gray-400 text-center py-8">No results found</p>
         } @else {
           @for (article of filteredResults(); track article.slug + $index) {
-            <a
-              [routerLink]="'/' + locale + '/blog/' + article.slug"
-              class="flex md:flex-row flex-col items-start justify-between md:items-center group py-4"
-            >
-              <div>
-                <p class="text-neutral-300 text-lg font-medium group-hover:text-white transition duration-200">
-                  {{ article.title }}
-                </p>
-                <p class="text-neutral-300 text-sm mt-2 max-w-xl group-hover:text-white transition duration-200">
-                  {{ truncateText(article.description, 80) }}
-                </p>
-                <div class="flex gap-2 items-center my-4">
-                  <p class="text-neutral-300 text-sm max-w-xl group-hover:text-white transition duration-200">
-                    {{ formatDate(article.publishedAt) }}
-                  </p>
-                  <div class="h-1 w-1 rounded-full bg-neutral-800"></div>
-                  <div class="flex gap-4 flex-wrap">
-                    @for (category of article.categories || []; track $index) {
-                      <p class="text-xs font-bold text-muted px-2 py-1 rounded-full bg-neutral-800 capitalize">
-                        {{ category.name }}
-                      </p>
-                    }
+            <div class="py-6">
+              <!-- Title row with CFIN icon -->
+              <div class="flex items-start gap-3">
+                <div class="flex-shrink-0 mt-1 w-8 h-8 rounded-full bg-[#7a9e8e] flex items-center justify-center">
+                  <span class="text-white text-xs font-bold">C</span>
+                </div>
+                <div class="flex-1 min-w-0">
+                  <a
+                    [routerLink]="'/' + locale + '/blog/' + article.slug"
+                    class="text-[#2a6496] text-base font-semibold hover:underline leading-snug"
+                  >
+                    {{ article.title }}
+                  </a>
+                  <!-- Author & date row -->
+                  <div class="flex items-center justify-between mt-1">
+                    <p class="text-xs text-gray-500">
+                      By <span class="text-[#2a6496]">Community Manager</span>
+                      <span class="ml-1">posted {{ relativeDate(article.publishedAt) }}</span>
+                    </p>
+                    <span class="text-xs text-gray-400 hidden sm:inline">Be the first person to like this</span>
                   </div>
                 </div>
               </div>
-            </a>
+
+              <!-- Description -->
+              <div class="mt-3 pl-11">
+                <p class="text-sm text-gray-700 leading-relaxed">
+                  {{ truncateText(article.description, 500) }}
+                </p>
+              </div>
+
+              <!-- Footer: categories + comments badge -->
+              <div class="flex items-center justify-between mt-3 pl-11">
+                <div class="flex gap-2 flex-wrap">
+                  @for (category of article.categories || []; track $index) {
+                    <span class="text-xs text-white px-2 py-0.5 rounded bg-gray-600 capitalize">
+                      {{ category.name }}
+                    </span>
+                  }
+                </div>
+                <span class="text-xs text-white bg-gray-500 rounded px-2 py-0.5">0 comments</span>
+              </div>
+            </div>
           }
         }
       </div>
@@ -82,6 +99,14 @@ export class BlogPostRowsComponent implements OnInit {
   onSearch(event: Event) {
     const value = (event.target as HTMLInputElement).value;
     this.search.set(value);
+  }
+
+  relativeDate(dateStr: string): string {
+    try {
+      return formatDistanceToNow(new Date(dateStr), { addSuffix: false }) + ' ago';
+    } catch {
+      return dateStr;
+    }
   }
 
   formatDate(dateStr: string): string {

@@ -11,14 +11,13 @@ import { strapiImage } from '../../utils/utils';
     @if (image) {
       <a
         [routerLink]="'/' + (locale || 'en')"
-        class="font-normal flex space-x-2 items-center text-sm mr-4 text-black relative z-20"
+        class="flex items-center relative z-20 mr-4"
       >
         <app-blur-image
           [src]="getImageUrl()"
-          [alt]="image.alternativeText || 'Logo'"
-          className="h-10 w-10 rounded-xl object-contain"
+          [alt]="image.alternativeText || 'CFIN Logo'"
+          className="h-16 w-auto object-contain"
         />
-        <span class="text-white font-bold">LaunchPad</span>
       </a>
     }
   `,

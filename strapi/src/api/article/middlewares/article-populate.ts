@@ -6,6 +6,12 @@ import type { Core } from '@strapi/strapi';
 const populate = {
   localizations: true,
   image: true,
+  content_component: {
+    on: {
+      'shared.content': true,
+      'shared.video-embedding': true,
+    },
+  },
   categories: {
     populate: {
       product: true,

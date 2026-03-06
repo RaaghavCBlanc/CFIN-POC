@@ -1,0 +1,23 @@
+{
+  "collectionName": "components_items_dropdown_items",
+  "info": {
+    "displayName": "Dropdown_items"
+  },
+  "options": {},
+  "attributes": {
+    "Title": {
+      "type": "string",
+      "required": true
+    },
+    "URL": {
+      "type": "string",
+      "required": true
+    },
+    "open_newtab": {
+      "type": "boolean",
+      "required": true,
+      "default": true
+    }
+  },
+  "config": {}
+}

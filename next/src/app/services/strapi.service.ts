@@ -1,6 +1,8 @@
-import { Injectable, inject, NgZone } from '@angular/core';
+import { Injectable, inject, NgZone, PLATFORM_ID } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
 import { strapi } from '@strapi/client';
 import { getApiUrl } from '../utils/utils';
+import { AuthService } from './auth.service';
 
 interface CacheEntry {
   data: any;
@@ -19,6 +21,8 @@ function outsideZone<T>(zone: NgZone, fn: () => Promise<T>): Promise<T> {
 @Injectable({ providedIn: 'root' })
 export class StrapiService {
   private zone = inject(NgZone);
+  private authService = inject(AuthService);
+  private platformId = inject(PLATFORM_ID);
   private cache = new Map<string, CacheEntry>();
   private readonly CACHE_TTL = 15 * 60 * 1000; // 15 minutes
   private isDraftMode = false;
@@ -33,9 +37,18 @@ export class StrapiService {
 
   private createClient(isDraftMode: boolean = false) {
     const headers: Record<string, string> = {};
+
     if (isDraftMode) {
       headers['strapi-encode-source-maps'] = 'true';
     }
+
+    if (isPlatformBrowser(this.platformId)) {
+      const token = this.authService.getToken();
+      if (token) {
+        headers['Authorization'] = `Bearer ${token}`;
+      }
+    }
+
     return strapi({
       baseURL: `${getApiUrl()}/api`,
       headers,
@@ -162,3 +175,4 @@ export class StrapiService {
     this.cache.clear();
   }
 }
+

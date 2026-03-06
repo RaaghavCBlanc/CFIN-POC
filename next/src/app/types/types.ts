@@ -9,12 +9,31 @@ export interface Image {
   alternativeText: string;
 }
 
+export interface ArticleContentTextComponent {
+  __component: 'shared.content';
+  id?: number;
+  content: any[];
+}
+
+export interface ArticleContentVideoEmbeddingComponent {
+  __component: 'shared.video-embedding';
+  id?: number;
+  url: string;
+  caption?: string | null;
+  autoplay?: boolean | null;
+}
+
+export type ArticleContentComponent =
+  | ArticleContentTextComponent
+  | ArticleContentVideoEmbeddingComponent;
+
 export interface Article {
   title: string;
   description?: string | null;
   localizations: StrapiLocaleObject[];
   slug: string;
-  content: any; // Strapi blocks content
+  content?: any[] | null; // Legacy Strapi blocks field
+  content_component?: ArticleContentComponent[];
   dynamic_zone: any[];
   createdAt: string;
   updatedAt: string;

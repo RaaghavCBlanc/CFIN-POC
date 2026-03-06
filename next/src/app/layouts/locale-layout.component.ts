@@ -19,7 +19,7 @@ import { SeoService } from '../services/seo.service';
     DraftModeBannerComponent,
   ],
   template: `
-    <div class="font-sans bg-charcoal antialiased h-full w-full">
+    <div class="font-sans bg-white antialiased h-full w-full">
       @if (navbarData) {
         <app-navbar [data]="navbarData" [locale]="locale" />
       }

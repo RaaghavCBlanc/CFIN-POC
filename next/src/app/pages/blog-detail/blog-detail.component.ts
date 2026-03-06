@@ -11,14 +11,15 @@ import { SeoService } from '../../services/seo.service';
   imports: [BlogLayoutComponent],
   template: `
     @if (article) {
-      <app-blog-layout [article]="article" [locale]="locale" />
+      <app-blog-layout [article]="article" [pageData]="pageData" [locale]="locale" />
     } @else if (notFound) {
-      <div class="flex items-center justify-center h-96 text-white text-xl">Blog not found</div>
+      <div class="flex items-center justify-center h-96 text-gray-700 text-xl">Blog not found</div>
     }
   `,
 })
 export class BlogDetailComponent implements OnInit {
   article: any = null;
+  pageData: any = null;
   locale = 'en';
   notFound = false;
 
@@ -38,10 +39,15 @@ export class BlogDetailComponent implements OnInit {
 
   private async loadData(slug: string) {
     try {
-      const [article] = await this.strapiService.fetchCollectionType<any[]>('articles', {
-        filters: { slug: { $eq: slug } },
-        locale: this.locale,
-      });
+      const [articles, pageData] = await Promise.all([
+        this.strapiService.fetchCollectionType<any[]>('articles', {
+          filters: { slug: { $eq: slug } },
+          locale: this.locale,
+        }),
+        this.strapiService.fetchSingleType('blog-page', { locale: this.locale }),
+      ]);
+
+      const article = articles?.[0];
 
       if (!article) {
         this.notFound = true;
@@ -49,6 +55,7 @@ export class BlogDetailComponent implements OnInit {
       }
 
       this.article = article;
+      this.pageData = pageData;
 
       if (article?.seo) {
         this.seoService.updateMeta(article.seo);

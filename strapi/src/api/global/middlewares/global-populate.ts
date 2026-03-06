@@ -6,23 +6,40 @@ import type { Core } from '@strapi/strapi';
 const populate = {
   navbar: {
     populate: {
-      left_navbar_items: true,
-      right_navbar_items: true,
       logo: {
         populate: {
           image: true,
+        },
+      },
+      top_navbar: {
+        populate: {
+          icon: true,
+        },
+      },
+      bottom_navbar: {
+        populate: {
+          icon: true,
+          dropdown_items: true,
         },
       },
     },
   },
   footer: {
     populate: {
-      internal_links: true,
       policy_links: true,
-      social_media_links: true,
+      social_media_links: {
+        populate: {
+          icon: true,
+        },
+      },
       logo: {
         populate: {
           image: true,
+        },
+      },
+      footer_columns: {
+        populate: {
+          links: true,
         },
       },
     },

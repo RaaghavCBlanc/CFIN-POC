@@ -7,25 +7,29 @@ import { MobileNavbarComponent } from './mobile-navbar.component';
   standalone: true,
   imports: [DesktopNavbarComponent, MobileNavbarComponent],
   template: `
-    <nav class="sticky top-0 z-50 w-full bg-charcoal/95 backdrop-blur-sm border-b border-neutral-800/50">
-      <div class="max-w-7xl mx-auto w-full px-4 lg:px-6">
+    <nav class="sticky top-0 z-50 w-full bg-white shadow-sm">
+      <div class="max-w-7xl mx-auto w-full px-4 lg:px-8">
         <div class="hidden lg:block w-full">
-          @if (data?.left_navbar_items) {
+          @if (data?.top_navbar) {
             <app-desktop-navbar
               [locale]="locale"
-              [leftNavbarItems]="data.left_navbar_items"
-              [rightNavbarItems]="data.right_navbar_items"
+              [topNavbarItems]="data.top_navbar"
+              [bottomNavbarItems]="data.bottom_navbar"
               [logo]="data.logo"
+              [showSearch]="data.show_search"
+              [searchPlaceholder]="data.search_placeholder"
             />
           }
         </div>
         <div class="flex h-full w-full items-center lg:hidden">
-          @if (data?.left_navbar_items) {
+          @if (data?.top_navbar) {
             <app-mobile-navbar
               [locale]="locale"
-              [leftNavbarItems]="data.left_navbar_items"
-              [rightNavbarItems]="data.right_navbar_items"
+              [topNavbarItems]="data.top_navbar"
+              [bottomNavbarItems]="data.bottom_navbar"
               [logo]="data.logo"
+              [showSearch]="data.show_search"
+              [searchPlaceholder]="data.search_placeholder"
             />
           }
         </div>

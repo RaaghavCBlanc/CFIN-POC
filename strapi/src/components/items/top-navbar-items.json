@@ -1,0 +1,40 @@
+{
+  "collectionName": "components_items_top_navbar_items",
+  "info": {
+    "displayName": "Top_navbar_items"
+  },
+  "options": {},
+  "attributes": {
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "URL": {
+      "type": "string",
+      "required": false
+    },
+    "open_newtab": {
+      "type": "boolean",
+      "required": true,
+      "default": true
+    },
+    "style_variant": {
+      "type": "enumeration",
+      "required": true,
+      "enum": [
+        "button_primary",
+        "button_secondary",
+        "language_switcher"
+      ]
+    },
+    "icon": {
+      "type": "media",
+      "multiple": false,
+      "allowedTypes": [
+        "images",
+        "files"
+      ]
+    }
+  },
+  "config": {}
+}

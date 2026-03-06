@@ -1,0 +1,42 @@
+{
+  "collectionName": "components_items_bottom_navbar_items",
+  "info": {
+    "displayName": "Bottom_navbar_items"
+  },
+  "options": {},
+  "attributes": {
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "URL": {
+      "type": "string",
+      "required": false
+    },
+    "open_newtab": {
+      "type": "boolean",
+      "required": true,
+      "default": true
+    },
+    "icon": {
+      "type": "media",
+      "multiple": false,
+      "required": false,
+      "allowedTypes": [
+        "images",
+        "files"
+      ]
+    },
+    "has_dropdown": {
+      "type": "boolean",
+      "required": true,
+      "default": false
+    },
+    "dropdown_items": {
+      "type": "component",
+      "component": "items.dropdown-items",
+      "repeatable": true
+    }
+  },
+  "config": {}
+}

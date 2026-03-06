@@ -11,7 +11,7 @@ import { truncate } from '../utils/utils';
   imports: [RouterLink, BlurImageComponent],
   template: `
     <a
-      class="shadow-derek grid grid-cols-1 md:grid-cols-2 rounded-3xl group border border-transparent hover:border-neutral-800 w-full hover:bg-neutral-900 overflow-hidden hover:scale-[1.02] transition duration-200"
+      class="grid grid-cols-1 md:grid-cols-2 group w-full overflow-hidden hover:shadow-lg transition duration-200 rounded-lg border border-gray-200"
       [routerLink]="'/' + locale + '/blog/' + article.slug"
     >
       <div>
@@ -21,25 +21,25 @@ import { truncate } from '../utils/utils';
             [alt]="article.title"
             [height]="1200"
             [width]="1200"
-            className="h-full object-cover object-top w-full rounded-3xl"
+            className="h-full object-cover object-top w-full"
           />
         } @else {
-          <div class="h-full flex items-center justify-center group-hover:bg-neutral-900"></div>
+          <div class="h-full flex items-center justify-center bg-gray-100"></div>
         }
       </div>
-      <div class="p-4 md:p-8 group-hover:bg-neutral-900 flex flex-col justify-between">
+      <div class="p-4 md:p-8 bg-white flex flex-col justify-between">
         <div>
           <div class="flex gap-4 flex-wrap mb-4">
             @for (category of article.categories || []; track $index) {
-              <p class="text-xs font-bold text-muted px-4 py-2 rounded-full bg-neutral-800 capitalize">{{ category.name }}</p>
+              <p class="text-xs font-bold text-white px-4 py-1.5 rounded-full bg-gray-700 capitalize">{{ category.name }}</p>
             }
           </div>
-          <p class="text-lg md:text-4xl font-bold mb-4">{{ article.title }}</p>
-          <p class="text-left text-base md:text-xl mt-2 text-muted">{{ truncateText(article.description, 500) }}</p>
+          <p class="text-lg md:text-3xl font-bold mb-4 text-gray-900">{{ article.title }}</p>
+          <p class="text-left text-base md:text-lg mt-2 text-gray-600">{{ truncateText(article.description, 500) }}</p>
         </div>
         <div class="flex space-x-2 items-center mt-6">
-          <div class="h-1 w-1 bg-neutral-300 rounded-full"></div>
-          <p class="text-neutral-300 text-sm max-w-xl group-hover:text-white transition duration-200">
+          <div class="h-1 w-1 bg-gray-400 rounded-full"></div>
+          <p class="text-gray-500 text-sm">
             {{ formatDate(article.publishedAt) }}
           </p>
         </div>
@@ -69,7 +69,7 @@ export class BlogCardComponent {
   imports: [RouterLink, BlurImageComponent],
   template: `
     <a
-      class="shadow-derek rounded-3xl group border border-transparent hover:border-neutral-800 w-full hover:bg-neutral-900 overflow-hidden hover:scale-[1.02] transition duration-200 block"
+      class="rounded-lg group border border-gray-200 w-full overflow-hidden hover:shadow-lg transition duration-200 block bg-white"
       [routerLink]="'/' + locale + '/blog/' + article.slug"
     >
       <div>
@@ -79,25 +79,25 @@ export class BlogCardComponent {
             [alt]="article.title"
             [height]="800"
             [width]="800"
-            className="h-64 md:h-96 object-cover object-top w-full rounded-3xl"
+            className="h-64 md:h-96 object-cover object-top w-full"
           />
         } @else {
-          <div class="h-64 md:h-96 flex items-center justify-center group-hover:bg-neutral-900"></div>
+          <div class="h-64 md:h-96 flex items-center justify-center bg-gray-100"></div>
         }
       </div>
-      <div class="p-4 md:p-8 group-hover:bg-neutral-900 flex flex-col justify-between">
+      <div class="p-4 md:p-8 flex flex-col justify-between">
         <div>
           <div class="flex gap-4 flex-wrap mb-4">
             @for (category of article.categories || []; track $index) {
-              <p class="text-xs font-bold text-muted px-4 py-2 rounded-full bg-neutral-800 capitalize">{{ category.name }}</p>
+              <p class="text-xs font-bold text-white px-4 py-1.5 rounded-full bg-gray-700 capitalize">{{ category.name }}</p>
             }
           </div>
-          <p class="text-lg md:text-xl font-bold mb-4">{{ article.title }}</p>
-          <p class="text-left text-sm md:text-base mt-2 text-muted">{{ truncateText(article.description, 500) }}</p>
+          <p class="text-lg md:text-xl font-bold mb-4 text-gray-900">{{ article.title }}</p>
+          <p class="text-left text-sm md:text-base mt-2 text-gray-600">{{ truncateText(article.description, 500) }}</p>
         </div>
         <div class="flex space-x-2 items-center mt-6">
-          <div class="h-1 w-1 bg-neutral-300 rounded-full"></div>
-          <p class="text-neutral-300 text-sm max-w-xl group-hover:text-white transition duration-200">
+          <div class="h-1 w-1 bg-gray-400 rounded-full"></div>
+          <p class="text-gray-500 text-sm">
             {{ formatDate(article.publishedAt) }}
           </p>
         </div>

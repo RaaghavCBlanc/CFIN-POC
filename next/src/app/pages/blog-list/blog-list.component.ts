@@ -1,46 +1,78 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, inject, signal, computed } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { ContainerComponent } from '../../components/container/container.component';
-import { AmbientColorComponent } from '../../components/decorations/ambient-color.component';
-import { FeatureIconContainerComponent } from '../../components/dynamic-zone/features/feature-icon-container.component';
-import { HeadingComponent } from '../../components/elements/heading.component';
-import { SubheadingComponent } from '../../components/elements/subheading.component';
-import { BlogCardComponent } from '../../components/blog-card.component';
 import { BlogPostRowsComponent } from '../../components/blog-post-rows.component';
 import { StrapiService } from '../../services/strapi.service';
 import { SlugService } from '../../services/slug.service';
 import { SeoService } from '../../services/seo.service';
+import { strapiImage } from '../../utils/utils';
 
 @Component({
   selector: 'app-blog-list',
   standalone: true,
   imports: [
     ContainerComponent,
-    AmbientColorComponent,
-    FeatureIconContainerComponent,
-    HeadingComponent,
-    SubheadingComponent,
-    BlogCardComponent,
     BlogPostRowsComponent,
   ],
   template: `
-    <div class="relative overflow-hidden py-20 md:py-0">
-      <app-ambient-color />
-      <app-container className="flex flex-col items-center justify-between pb-20">
-        <div class="relative z-20 py-10 md:pt-40">
-          <app-feature-icon-container className="flex justify-center items-center overflow-hidden">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1"/><path d="M9 12h6"/><path d="M9 16h6"/></svg>
-          </app-feature-icon-container>
-          <app-heading as="h1" className="mt-4">{{ pageData?.heading }}</app-heading>
-          <app-subheading className="max-w-3xl mx-auto">{{ pageData?.sub_heading }}</app-subheading>
+    <div class="relative overflow-hidden">
+      <!-- Teal Banner -->
+      <div class="py-10 px-8" [style.background-color]="pageData?.banner_background_color || '#7a9e8e'">
+        <div class="max-w-7xl mx-auto flex items-center justify-between">
+          <h1 class="text-3xl font-bold text-white">{{ pageData?.heading || 'Articles' }}</h1>
+          @if (bannerImageUrl) {
+            <img [src]="bannerImageUrl" alt="" class="h-16 md:h-20 object-contain" />
+          }
         </div>
+      </div>
 
-        @if (firstArticle) {
-          <app-blog-card [article]="firstArticle" [locale]="locale" />
+      <app-container className="py-10">
+        <!-- Featured Content -->
+        @if (featuredItems.length) {
+          <div class="mb-8">
+            <h2 class="text-xl font-semibold text-gray-900 mb-4">Featured Content</h2>
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+              @for (item of featuredItems; track $index) {
+                <a
+                  [href]="item.URL"
+                  [target]="item.open_newtab ? '_blank' : '_self'"
+                  rel="noopener noreferrer"
+                  class="block overflow-hidden rounded-md border border-gray-200 hover:shadow-md transition"
+                >
+                  @if (item.image?.url) {
+                    <img [src]="getImageUrl(item.image.url)" [alt]="'Featured content'" class="w-full h-40 object-cover" />
+                  }
+                </a>
+              }
+            </div>
+          </div>
         }
 
-        @if (restArticles.length) {
-          <app-blog-post-rows [articles]="restArticles" [locale]="locale" />
+        <!-- CTA text -->
+        @if (pageData?.cta_text) {
+          <p class="text-sm text-gray-600 mb-6">
+            {{ pageData.cta_text }}
+            @if (pageData.cta_link) {
+              <a [href]="pageData.cta_link" class="text-blue-600 underline hover:text-blue-800">here</a>.
+            }
+          </p>
+        }
+
+        <!-- Sort dropdown -->
+        <div class="flex justify-end mb-4">
+          <select
+            [value]="sortOrder()"
+            (change)="onSortChange($event)"
+            class="text-sm border border-gray-300 rounded px-3 py-1.5 text-gray-700 bg-white focus:outline-none focus:ring-1 focus:ring-[#7a9e8e]"
+          >
+            <option value="most_recent">Most Recent</option>
+            <option value="oldest">Oldest</option>
+          </select>
+        </div>
+
+        <!-- Article rows -->
+        @if (sortedArticles().length) {
+          <app-blog-post-rows [articles]="sortedArticles()" [locale]="locale" />
         }
       </app-container>
     </div>
@@ -48,14 +80,35 @@ import { SeoService } from '../../services/seo.service';
 })
 export class BlogListComponent implements OnInit {
   pageData: any = null;
-  firstArticle: any = null;
-  restArticles: any[] = [];
+  allArticles = signal<any[]>([]);
+  featuredItems: any[] = [];
+  bannerImageUrl: string | null = null;
   locale = 'en';
+
+  sortOrder = signal<string>('most_recent');
+
+  sortedArticles = computed(() => {
+    const arts = [...this.allArticles()];
+    if (this.sortOrder() === 'oldest') {
+      arts.sort((a, b) => new Date(a.publishedAt).getTime() - new Date(b.publishedAt).getTime());
+    } else {
+      arts.sort((a, b) => new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime());
+    }
+    return arts;
+  });
 
   private route = inject(ActivatedRoute);
   private strapiService = inject(StrapiService);
   private slugService = inject(SlugService);
   private seoService = inject(SeoService);
+
+  getImageUrl(url: string): string {
+    return strapiImage(url);
+  }
+
+  onSortChange(event: Event) {
+    this.sortOrder.set((event.target as HTMLSelectElement).value);
+  }
 
   ngOnInit() {
     this.route.parent?.paramMap.subscribe(params => {
@@ -74,9 +127,17 @@ export class BlogListComponent implements OnInit {
       ]);
 
       this.pageData = pageData;
-      if (articles.length) {
-        this.firstArticle = articles[0];
-        this.restArticles = articles.slice(1);
+      this.allArticles.set(articles || []);
+      this.featuredItems = pageData?.featured_content_items || [];
+
+      // Resolve banner image
+      if (pageData?.banner_image?.url) {
+        this.bannerImageUrl = strapiImage(pageData.banner_image.url);
+      }
+
+      // Default sort from CMS
+      if (pageData?.sort_options) {
+        this.sortOrder.set(pageData.sort_options);
       }
 
       if (pageData?.seo) {

@@ -24,20 +24,20 @@
     "built_with": {
       "type": "string"
     },
-    "internal_links": {
-      "type": "component",
-      "repeatable": true,
-      "component": "shared.link"
-    },
     "policy_links": {
       "type": "component",
-      "repeatable": true,
-      "component": "shared.link"
+      "component": "shared.link",
+      "repeatable": true
     },
     "social_media_links": {
       "type": "component",
-      "repeatable": true,
-      "component": "shared.link"
+      "component": "shared.link",
+      "repeatable": true
+    },
+    "footer_columns": {
+      "type": "component",
+      "component": "items.footer-column",
+      "repeatable": true
     }
   }
 }

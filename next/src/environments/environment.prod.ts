@@ -1,6 +1,6 @@
 export const environment = {
   production: true,
-  apiUrl: '',
+  apiUrl: 'http://localhost:1337',
   previewSecret: '',
-  imageHostname: '',
+  imageHostname: 'localhost',
 };

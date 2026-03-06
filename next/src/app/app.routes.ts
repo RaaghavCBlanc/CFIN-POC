@@ -1,10 +1,11 @@
 import { Routes } from '@angular/router';
+import { authGuard } from './guards/auth.guard';
 
 export const routes: Routes = [
   {
     path: '',
     pathMatch: 'full',
-    redirectTo: 'en',
+    redirectTo: 'en/blog',
   },
   {
     path: ':locale',
@@ -14,16 +15,17 @@ export const routes: Routes = [
       {
         path: '',
         pathMatch: 'full',
-        loadComponent: () =>
-          import('./pages/home/home.component').then(m => m.HomeComponent),
+        redirectTo: 'blog',
       },
       {
         path: 'blog',
+        canActivate: [authGuard],
         loadComponent: () =>
           import('./pages/blog-list/blog-list.component').then(m => m.BlogListComponent),
       },
       {
         path: 'blog/:slug',
+        canActivate: [authGuard],
         loadComponent: () =>
           import('./pages/blog-detail/blog-detail.component').then(m => m.BlogDetailComponent),
       },

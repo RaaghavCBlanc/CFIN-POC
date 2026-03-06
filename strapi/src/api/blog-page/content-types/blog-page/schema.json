@@ -18,13 +18,13 @@
   "attributes": {
     "seo": {
       "type": "component",
-      "repeatable": false,
       "pluginOptions": {
         "i18n": {
           "localized": true
         }
       },
-      "component": "shared.seo"
+      "component": "shared.seo",
+      "repeatable": false
     },
     "heading": {
       "type": "string",
@@ -44,6 +44,11 @@
     },
     "dynamic_zone": {
       "type": "dynamiczone",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      },
       "components": [
         "dynamic-zone.testimonials",
         "dynamic-zone.related-products",
@@ -57,12 +62,82 @@
         "dynamic-zone.faq",
         "dynamic-zone.cta",
         "dynamic-zone.brands"
-      ],
+      ]
+    },
+    "banner_background_color": {
+      "type": "string",
       "pluginOptions": {
         "i18n": {
           "localized": true
         }
-      }
+      },
+      "required": true
+    },
+    "banner_image": {
+      "type": "media",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      },
+      "multiple": false,
+      "required": true,
+      "allowedTypes": [
+        "images",
+        "files"
+      ]
+    },
+    "sort_options": {
+      "type": "enumeration",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      },
+      "required": true,
+      "default": "most_recent",
+      "enum": [
+        "most_recent",
+        "oldest"
+      ]
+    },
+    "articles_per_page": {
+      "type": "integer",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      },
+      "required": true,
+      "default": 3
+    },
+    "cta_text": {
+      "type": "string",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      },
+      "required": true
+    },
+    "cta_link": {
+      "type": "string",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      },
+      "required": true
+    },
+    "featured_content_items": {
+      "type": "component",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      },
+      "component": "cards.featured-content-card",
+      "repeatable": true
     }
   }
 }

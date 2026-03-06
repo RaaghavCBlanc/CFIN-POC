@@ -1,0 +1,22 @@
+{
+  "collectionName": "components_shared_video_embeddings",
+  "info": {
+    "displayName": "Video_Embedding"
+  },
+  "options": {},
+  "attributes": {
+    "url": {
+      "type": "string",
+      "required": true
+    },
+    "caption": {
+      "type": "string",
+      "required": true
+    },
+    "autoplay": {
+      "type": "boolean",
+      "default": false
+    }
+  },
+  "config": {}
+}

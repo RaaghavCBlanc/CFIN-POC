@@ -1,0 +1,28 @@
+{
+  "collectionName": "components_cards_featured_content_cards",
+  "info": {
+    "displayName": "FeaturedContentCard"
+  },
+  "options": {},
+  "attributes": {
+    "image": {
+      "type": "media",
+      "multiple": false,
+      "required": true,
+      "allowedTypes": [
+        "images",
+        "files"
+      ]
+    },
+    "URL": {
+      "type": "string",
+      "required": true
+    },
+    "open_newtab": {
+      "type": "boolean",
+      "required": true,
+      "default": true
+    }
+  },
+  "config": {}
+}

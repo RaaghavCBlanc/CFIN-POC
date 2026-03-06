@@ -5,6 +5,12 @@ import type { Core } from '@strapi/strapi';
 
 const populate = {
   localizations: true,
+  banner_image: true,
+  featured_content_items: {
+    populate: {
+      image: true,
+    },
+  },
   dynamic_zone: {
     on: {
       'dynamic-zone.hero': {
