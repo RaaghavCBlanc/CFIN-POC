@@ -183,8 +183,12 @@ export class MobileNavbarComponent {
   resolveNavUrl(rawUrl: string | null | undefined, title: string | null | undefined): string {
     const url = (rawUrl || '').trim();
 
+    if (this.isAuthCta(title)) {
+      return `/${this.locale}/sign-up`;
+    }
+
     if (!url || url === '#') {
-      return this.isAuthCta(title) ? `/${this.locale}/sign-up` : '#';
+      return '#';
     }
 
     if (this.isExternalUrl(url) || url.startsWith('#')) {
@@ -216,3 +220,4 @@ export class MobileNavbarComponent {
     return `/${this.locale}${normalizedPath}`;
   }
 }
+

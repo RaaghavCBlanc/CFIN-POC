@@ -5,6 +5,7 @@ import { BlogPostRowsComponent } from '../../components/blog-post-rows.component
 import { StrapiService } from '../../services/strapi.service';
 import { SlugService } from '../../services/slug.service';
 import { SeoService } from '../../services/seo.service';
+import { AuthService } from '../../services/auth.service';
 import { strapiImage } from '../../utils/utils';
 
 @Component({
@@ -101,6 +102,7 @@ export class BlogListComponent implements OnInit {
   private strapiService = inject(StrapiService);
   private slugService = inject(SlugService);
   private seoService = inject(SeoService);
+  private authService = inject(AuthService);
 
   getImageUrl(url: string): string {
     return strapiImage(url);
@@ -127,7 +129,10 @@ export class BlogListComponent implements OnInit {
       ]);
 
       this.pageData = pageData;
-      this.allArticles.set(articles || []);
+      const visibleArticles = this.authService.isAuthenticated()
+        ? (articles || [])
+        : (articles || []).filter((article: any) => !article?.premium);
+      this.allArticles.set(visibleArticles);
       this.featuredItems = pageData?.featured_content_items || [];
 
       // Resolve banner image
@@ -157,3 +162,4 @@ export class BlogListComponent implements OnInit {
     }
   }
 }
+

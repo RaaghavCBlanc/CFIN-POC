@@ -4,6 +4,7 @@ import { BlogLayoutComponent } from '../../components/blog-layout.component';
 import { StrapiService } from '../../services/strapi.service';
 import { SlugService } from '../../services/slug.service';
 import { SeoService } from '../../services/seo.service';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-blog-detail',
@@ -27,6 +28,7 @@ export class BlogDetailComponent implements OnInit {
   private strapiService = inject(StrapiService);
   private slugService = inject(SlugService);
   private seoService = inject(SeoService);
+  private authService = inject(AuthService);
 
   ngOnInit() {
     this.route.paramMap.subscribe(params => {
@@ -54,6 +56,11 @@ export class BlogDetailComponent implements OnInit {
         return;
       }
 
+      if (article?.premium && !this.authService.isAuthenticated()) {
+        this.notFound = true;
+        return;
+      }
+
       this.article = article;
       this.pageData = pageData;
 
@@ -75,3 +82,4 @@ export class BlogDetailComponent implements OnInit {
     }
   }
 }
+

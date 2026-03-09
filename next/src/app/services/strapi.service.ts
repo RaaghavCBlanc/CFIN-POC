@@ -55,8 +55,16 @@ export class StrapiService {
     });
   }
 
+  private getAuthCacheScope(): 'server' | 'public' | 'authenticated' {
+    if (!isPlatformBrowser(this.platformId)) {
+      return 'server';
+    }
+
+    return this.authService.getToken() ? 'authenticated' : 'public';
+  }
+
   private getCacheKey(type: string, name: string, options?: any): string {
-    return `${type}-${name}-${JSON.stringify(options || {})}`;
+    return `${this.getAuthCacheScope()}-${type}-${name}-${JSON.stringify(options || {})}`;
   }
 
   private getFromCache(key: string): any | null {
@@ -175,4 +183,5 @@ export class StrapiService {
     this.cache.clear();
   }
 }
+
 
