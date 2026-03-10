@@ -1,0 +1,40 @@
+{
+  "collectionName": "components_dynamic_zone_home_what_we_offers",
+  "info": {
+    "displayName": "Home What We Offer"
+  },
+  "options": {},
+  "attributes": {
+    "heading": {
+      "type": "string"
+    },
+    "sub_heading": {
+      "type": "string"
+    },
+    "background_color": {
+      "type": "string",
+      "default": "#77c8be"
+    },
+    "video": {
+      "type": "component",
+      "component": "shared.video-embedding",
+      "repeatable": false
+    },
+    "video_poster": {
+      "type": "media",
+      "multiple": false,
+      "allowedTypes": [
+        "images",
+        "files",
+        "videos",
+        "audios"
+      ]
+    },
+    "items": {
+      "type": "component",
+      "component": "home.offer-item",
+      "repeatable": true
+    }
+  },
+  "config": {}
+}

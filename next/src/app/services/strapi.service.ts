@@ -35,14 +35,14 @@ export class StrapiService {
     return this.isDraftMode;
   }
 
-  private createClient(isDraftMode: boolean = false) {
+  private createClient(isDraftMode: boolean = false, includeAuth: boolean = true) {
     const headers: Record<string, string> = {};
 
     if (isDraftMode) {
       headers['strapi-encode-source-maps'] = 'true';
     }
 
-    if (isPlatformBrowser(this.platformId)) {
+    if (includeAuth && isPlatformBrowser(this.platformId)) {
       const token = this.authService.getToken();
       if (token) {
         headers['Authorization'] = `Bearer ${token}`;
@@ -82,26 +82,53 @@ export class StrapiService {
     this.cache.set(key, { data, timestamp: Date.now() });
   }
 
+  private shouldRetryWithAuth(error: unknown): boolean {
+    if (!isPlatformBrowser(this.platformId)) {
+      return false;
+    }
+
+    if (!this.authService.getToken()) {
+      return false;
+    }
+
+    const candidate = error as { status?: number; response?: { status?: number }; message?: string };
+    const status = candidate?.status ?? candidate?.response?.status;
+    const message = candidate?.message || '';
+
+    if (status === 401 || status === 403) {
+      return true;
+    }
+
+    return /status code\s+401/i.test(message) || /status code\s+403/i.test(message);
+  }
+
   async fetchCollectionType<T = any[]>(
     collectionName: string,
     options?: any
   ): Promise<T> {
-    try {
-      if (this.isDraftMode) {
+    if (this.isDraftMode) {
+      try {
         const { data } = await outsideZone(this.zone, () =>
-          this.createClient(true)
+          this.createClient(true, true)
             .collection(collectionName)
             .find({ ...options, status: 'draft' })
         );
         return data as T;
+      } catch (error) {
+        console.error(`Failed to fetch draft collection "${collectionName}":`, error);
+        return [] as unknown as T;
       }
+    }
 
-      const cacheKey = this.getCacheKey('collection', collectionName, options);
-      const cached = this.getFromCache(cacheKey);
-      if (cached) return cached as T;
+    const cacheKey = this.getCacheKey('collection', collectionName, options);
+    const cached = this.getFromCache(cacheKey);
+    if (cached) {
+      return cached as T;
+    }
 
+    try {
       const { data } = await outsideZone(this.zone, () =>
-        this.createClient()
+        this.createClient(false, false)
           .collection(collectionName)
           .find({ ...options, status: 'published' })
       );
@@ -109,6 +136,25 @@ export class StrapiService {
       this.setCache(cacheKey, data);
       return data as T;
     } catch (error) {
+      if (this.shouldRetryWithAuth(error)) {
+        try {
+          const { data } = await outsideZone(this.zone, () =>
+            this.createClient(false, true)
+              .collection(collectionName)
+              .find({ ...options, status: 'published' })
+          );
+
+          this.setCache(cacheKey, data);
+          return data as T;
+        } catch (retryError) {
+          console.error(
+            `Failed to fetch collection "${collectionName}" after authenticated retry:`,
+            retryError
+          );
+          return [] as unknown as T;
+        }
+      }
+
       console.error(`Failed to fetch collection "${collectionName}":`, error);
       return [] as unknown as T;
     }
@@ -118,22 +164,29 @@ export class StrapiService {
     singleTypeName: string,
     options?: any
   ): Promise<T> {
-    try {
-      if (this.isDraftMode) {
+    if (this.isDraftMode) {
+      try {
         const { data } = await outsideZone(this.zone, () =>
-          this.createClient(true)
+          this.createClient(true, true)
             .single(singleTypeName)
             .find({ ...options, status: 'draft' })
         );
         return data as T;
+      } catch (error) {
+        console.error(`Failed to fetch draft single type "${singleTypeName}":`, error);
+        return {} as T;
       }
+    }
 
-      const cacheKey = this.getCacheKey('single', singleTypeName, options);
-      const cached = this.getFromCache(cacheKey);
-      if (cached) return cached as T;
+    const cacheKey = this.getCacheKey('single', singleTypeName, options);
+    const cached = this.getFromCache(cacheKey);
+    if (cached) {
+      return cached as T;
+    }
 
+    try {
       const { data } = await outsideZone(this.zone, () =>
-        this.createClient()
+        this.createClient(false, false)
           .single(singleTypeName)
           .find({ ...options, status: 'published' })
       );
@@ -141,6 +194,25 @@ export class StrapiService {
       this.setCache(cacheKey, data);
       return data as T;
     } catch (error) {
+      if (this.shouldRetryWithAuth(error)) {
+        try {
+          const { data } = await outsideZone(this.zone, () =>
+            this.createClient(false, true)
+              .single(singleTypeName)
+              .find({ ...options, status: 'published' })
+          );
+
+          this.setCache(cacheKey, data);
+          return data as T;
+        } catch (retryError) {
+          console.error(
+            `Failed to fetch single type "${singleTypeName}" after authenticated retry:`,
+            retryError
+          );
+          return {} as T;
+        }
+      }
+
       console.error(`Failed to fetch single type "${singleTypeName}":`, error);
       return {} as T;
     }
@@ -151,22 +223,29 @@ export class StrapiService {
     documentId: string,
     options?: any
   ): Promise<T> {
-    try {
-      if (this.isDraftMode) {
+    if (this.isDraftMode) {
+      try {
         const { data } = await outsideZone(this.zone, () =>
-          this.createClient(true)
+          this.createClient(true, true)
             .collection(collectionName)
             .findOne(documentId, { ...options, status: 'draft' })
         );
         return data as T;
+      } catch (error) {
+        console.error(`Failed to fetch draft document "${documentId}" from "${collectionName}":`, error);
+        return {} as T;
       }
+    }
 
-      const cacheKey = this.getCacheKey('document', `${collectionName}-${documentId}`, options);
-      const cached = this.getFromCache(cacheKey);
-      if (cached) return cached as T;
+    const cacheKey = this.getCacheKey('document', `${collectionName}-${documentId}`, options);
+    const cached = this.getFromCache(cacheKey);
+    if (cached) {
+      return cached as T;
+    }
 
+    try {
       const { data } = await outsideZone(this.zone, () =>
-        this.createClient()
+        this.createClient(false, false)
           .collection(collectionName)
           .findOne(documentId, { ...options, status: 'published' })
       );
@@ -174,6 +253,25 @@ export class StrapiService {
       this.setCache(cacheKey, data);
       return data as T;
     } catch (error) {
+      if (this.shouldRetryWithAuth(error)) {
+        try {
+          const { data } = await outsideZone(this.zone, () =>
+            this.createClient(false, true)
+              .collection(collectionName)
+              .findOne(documentId, { ...options, status: 'published' })
+          );
+
+          this.setCache(cacheKey, data);
+          return data as T;
+        } catch (retryError) {
+          console.error(
+            `Failed to fetch document "${documentId}" from "${collectionName}" after authenticated retry:`,
+            retryError
+          );
+          return {} as T;
+        }
+      }
+
       console.error(`Failed to fetch document "${documentId}" from "${collectionName}":`, error);
       return {} as T;
     }
@@ -183,5 +281,3 @@ export class StrapiService {
     this.cache.clear();
   }
 }
-
-

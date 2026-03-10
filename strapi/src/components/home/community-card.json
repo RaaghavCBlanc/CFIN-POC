@@ -1,0 +1,45 @@
+{
+  "collectionName": "components_home_community_cards",
+  "info": {
+    "displayName": "Community Card"
+  },
+  "options": {},
+  "attributes": {
+    "title": {
+      "type": "string"
+    },
+    "excerpt": {
+      "type": "string"
+    },
+    "author_name": {
+      "type": "string"
+    },
+    "author_role": {
+      "type": "string"
+    },
+    "author_avatar": {
+      "type": "media",
+      "multiple": false,
+      "allowedTypes": [
+        "images",
+        "files",
+        "videos",
+        "audios"
+      ]
+    },
+    "chip_label": {
+      "type": "string"
+    },
+    "chip_color": {
+      "type": "string"
+    },
+    "link_url": {
+      "type": "string"
+    },
+    "open_in_newtab": {
+      "type": "boolean",
+      "default": false
+    }
+  },
+  "config": {}
+}

@@ -1,0 +1,34 @@
+{
+  "collectionName": "components_dynamic_zone_home_community_carousels",
+  "info": {
+    "displayName": "Home Community Carousel"
+  },
+  "options": {},
+  "attributes": {
+    "heading": {
+      "type": "string"
+    },
+    "sub_heading": {
+      "type": "string"
+    },
+    "cards": {
+      "type": "component",
+      "component": "home.community-card",
+      "repeatable": true
+    },
+    "show_arrows": {
+      "type": "boolean"
+    },
+    "show_dots": {
+      "type": "boolean"
+    },
+    "autoplay": {
+      "type": "boolean",
+      "default": false
+    },
+    "autoplay_interval_ms": {
+      "type": "integer"
+    }
+  },
+  "config": {}
+}

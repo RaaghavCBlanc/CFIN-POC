@@ -122,6 +122,55 @@ const populate = {
           },
         },
       },
+      'dynamic-zone.home-hero-carousel': {
+        populate: {
+          slides: {
+            populate: {
+              primary_cta: true,
+              secondary_cta: true,
+              desktop_image: true,
+            },
+          },
+        },
+      },
+      'dynamic-zone.home-what-we-offer': {
+        populate: {
+          video: true,
+          video_poster: true,
+          items: {
+            populate: {
+              icon: true,
+            },
+          },
+        },
+      },
+      'dynamic-zone.home-community-carousel': {
+        populate: {
+          cards: {
+            populate: {
+              author_avatar: true,
+            },
+          },
+        },
+      },
+      'dynamic-zone.home-trusted-members': {
+        populate: {
+          logos: {
+            populate: {
+              image: true,
+            },
+          },
+          testimonials: {
+            populate: {
+              user: {
+                populate: {
+                  image: true,
+                },
+              },
+            },
+          },
+        },
+      },
     },
   },
   seo: {

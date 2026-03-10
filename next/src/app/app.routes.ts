@@ -4,7 +4,7 @@ export const routes: Routes = [
   {
     path: '',
     pathMatch: 'full',
-    redirectTo: 'en/blog',
+    redirectTo: 'en',
   },
   {
     path: ':locale',
@@ -13,8 +13,8 @@ export const routes: Routes = [
     children: [
       {
         path: '',
-        pathMatch: 'full',
-        redirectTo: 'blog',
+        loadComponent: () =>
+          import('./pages/home/home.component').then(m => m.HomeComponent),
       },
       {
         path: 'blog',

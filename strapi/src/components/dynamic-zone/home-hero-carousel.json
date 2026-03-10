@@ -1,0 +1,32 @@
+{
+  "collectionName": "components_dynamic_zone_home_hero_carousels",
+  "info": {
+    "displayName": "Home Hero Carousel"
+  },
+  "options": {},
+  "attributes": {
+    "slides": {
+      "type": "component",
+      "component": "home.hero-slide",
+      "repeatable": true
+    },
+    "show_arrows": {
+      "type": "boolean",
+      "default": true
+    },
+    "show_dots": {
+      "type": "boolean",
+      "default": true
+    },
+    "autoplay": {
+      "type": "boolean",
+      "required": true,
+      "default": true
+    },
+    "autoplay_interval_ms": {
+      "type": "integer",
+      "default": 6000
+    }
+  },
+  "config": {}
+}

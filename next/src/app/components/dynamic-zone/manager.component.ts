@@ -12,6 +12,10 @@ import { FormNextToSectionComponent } from './form-next-to-section.component';
 import { FaqComponent } from './faq.component';
 import { RelatedProductsComponent } from './related-products.component';
 import { RelatedArticlesComponent } from './related-articles.component';
+import { HomeHeroCarouselComponent } from './home-hero-carousel.component';
+import { HomeWhatWeOfferComponent } from './home-what-we-offer.component';
+import { HomeCommunityCarouselComponent } from './home-community-carousel.component';
+import { HomeTrustedMembersComponent } from './home-trusted-members.component';
 
 const COMPONENT_MAP: Record<string, any> = {
   'dynamic-zone.hero': HeroComponent,
@@ -26,6 +30,10 @@ const COMPONENT_MAP: Record<string, any> = {
   'dynamic-zone.faq': FaqComponent,
   'dynamic-zone.related-products': RelatedProductsComponent,
   'dynamic-zone.related-articles': RelatedArticlesComponent,
+  'dynamic-zone.home-hero-carousel': HomeHeroCarouselComponent,
+  'dynamic-zone.home-what-we-offer': HomeWhatWeOfferComponent,
+  'dynamic-zone.home-community-carousel': HomeCommunityCarouselComponent,
+  'dynamic-zone.home-trusted-members': HomeTrustedMembersComponent,
 };
 
 @Component({
@@ -53,7 +61,8 @@ export class DynamicZoneManagerComponent {
   }
 
   getInputs(item: any): Record<string, any> {
-    return { ...item, locale: this.locale };
+    const { __component, id, ...componentInputs } = item;
+    return { ...componentInputs, locale: this.locale };
   }
 
   trackByFn(index: number, item: any): string {

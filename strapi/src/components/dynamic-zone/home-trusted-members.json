@@ -1,0 +1,41 @@
+{
+  "collectionName": "components_dynamic_zone_home_trusted_members",
+  "info": {
+    "displayName": "Home Trusted Members"
+  },
+  "options": {},
+  "attributes": {
+    "heading_prefix": {
+      "type": "string"
+    },
+    "highlight_number": {
+      "type": "string"
+    },
+    "heading_suffix": {
+      "type": "string"
+    },
+    "sub_heading": {
+      "type": "string"
+    },
+    "logos": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::logo.logo"
+    },
+    "testimonials": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::testimonial.testimonial"
+    },
+    "show_arrows": {
+      "type": "boolean",
+      "default": true
+    },
+    "show_dots": {
+      "type": "boolean",
+      "required": true,
+      "default": true
+    }
+  },
+  "config": {}
+}

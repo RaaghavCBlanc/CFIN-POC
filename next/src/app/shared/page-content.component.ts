@@ -8,7 +8,9 @@ import { DynamicZoneManagerComponent } from '../components/dynamic-zone/manager.
   imports: [AmbientColorComponent, DynamicZoneManagerComponent],
   template: `
     <div class="relative overflow-hidden w-full">
-      <app-ambient-color />
+      @if (showAmbient) {
+        <app-ambient-color />
+      }
       @if (pageData?.dynamic_zone) {
         <app-dynamic-zone-manager
           [dynamicZone]="pageData.dynamic_zone"
@@ -21,4 +23,5 @@ import { DynamicZoneManagerComponent } from '../components/dynamic-zone/manager.
 })
 export class PageContentComponent {
   @Input() pageData: any;
+  @Input() showAmbient = true;
 }

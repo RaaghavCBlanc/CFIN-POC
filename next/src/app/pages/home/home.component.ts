@@ -11,7 +11,7 @@ import { SeoService } from '../../services/seo.service';
   imports: [PageContentComponent],
   template: `
     @if (pageData) {
-      <app-page-content [pageData]="pageData" />
+      <app-page-content [pageData]="pageData" [showAmbient]="false" />
     }
   `,
 })
@@ -32,9 +32,15 @@ export class HomeComponent implements OnInit {
 
   private async loadData(locale: string) {
     try {
-      const [pageData] = await this.strapiService.fetchCollectionType('pages', {
-        filters: { slug: { $eq: 'homepage' }, locale },
-      });
+      let pageData = await this.fetchHomepageByLocale(locale);
+
+      // Fallback in case locale-specific record is missing or locale query shape changes.
+      if (!pageData) {
+        const [fallbackPage] = await this.strapiService.fetchCollectionType('pages', {
+          filters: { slug: { $eq: 'homepage' } },
+        });
+        pageData = fallbackPage;
+      }
 
       this.pageData = pageData;
 
@@ -42,16 +48,26 @@ export class HomeComponent implements OnInit {
         this.seoService.updateMeta(pageData.seo);
       }
 
-      const localizedSlugs = pageData?.localizations?.reduce(
-        (acc: Record<string, string>, loc: any) => {
-          acc[loc.locale] = '';
-          return acc;
-        },
-        { [locale]: '' }
-      ) || {};
+      const localizedSlugs =
+        pageData?.localizations?.reduce(
+          (acc: Record<string, string>, loc: any) => {
+            acc[loc.locale] = '';
+            return acc;
+          },
+          { [locale]: '' }
+        ) || {};
       this.slugService.setLocalizedSlugs(localizedSlugs);
     } catch (error) {
       console.error('Failed to load home page:', error);
     }
+  }
+
+  private async fetchHomepageByLocale(locale: string): Promise<any | null> {
+    const [pageData] = await this.strapiService.fetchCollectionType('pages', {
+      filters: { slug: { $eq: 'homepage' } },
+      locale,
+    });
+
+    return pageData || null;
   }
 }
