@@ -125,7 +125,7 @@ export class BlogListComponent implements OnInit {
         this.strapiService.fetchSingleType('blog-page', { locale: this.locale }),
         this.strapiService.fetchCollectionType<any[]>('articles', {
           filters: { locale: { $eq: this.locale } },
-        }),
+        }, this.authService.isAuthenticated()),
       ]);
 
       this.pageData = pageData;

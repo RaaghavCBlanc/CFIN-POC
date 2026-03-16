@@ -45,7 +45,7 @@ export class BlogDetailComponent implements OnInit {
         this.strapiService.fetchCollectionType<any[]>('articles', {
           filters: { slug: { $eq: slug } },
           locale: this.locale,
-        }),
+        }, this.authService.isAuthenticated()),
         this.strapiService.fetchSingleType('blog-page', { locale: this.locale }),
       ]);
 

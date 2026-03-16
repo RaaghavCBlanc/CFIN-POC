@@ -104,7 +104,8 @@ export class StrapiService {
 
   async fetchCollectionType<T = any[]>(
     collectionName: string,
-    options?: any
+    options?: any,
+    includeAuthForPublished: boolean = false
   ): Promise<T> {
     if (this.isDraftMode) {
       try {
@@ -128,7 +129,7 @@ export class StrapiService {
 
     try {
       const { data } = await outsideZone(this.zone, () =>
-        this.createClient(false, false)
+        this.createClient(false, includeAuthForPublished)
           .collection(collectionName)
           .find({ ...options, status: 'published' })
       );
