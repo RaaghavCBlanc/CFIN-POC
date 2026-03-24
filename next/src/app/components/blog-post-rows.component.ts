@@ -1,4 +1,4 @@
-import { Component, Input, signal, computed, OnInit } from '@angular/core';
+import { Component, Input, signal, computed, OnChanges, SimpleChanges } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { format, formatDistanceToNow } from 'date-fns';
 import { truncate } from '../utils/utils';
@@ -25,19 +25,26 @@ import { truncate } from '../utils/utils';
           <p class="text-gray-400 text-center py-8">No results found</p>
         } @else {
           @for (article of filteredResults(); track article.slug + $index) {
-            <div class="py-6">
+            <div [class]="getRowClass(article)">
               <!-- Title row with CFIN icon -->
               <div class="flex items-start gap-3">
                 <div class="flex-shrink-0 mt-1 w-8 h-8 rounded-full bg-[#7a9e8e] flex items-center justify-center">
                   <span class="text-white text-xs font-bold">C</span>
                 </div>
                 <div class="flex-1 min-w-0">
-                  <a
-                    [routerLink]="'/' + locale + '/blog/' + article.slug"
-                    class="text-[#2a6496] text-base font-semibold hover:underline leading-snug"
-                  >
-                    {{ article.title }}
-                  </a>
+                  <div class="flex items-center gap-2 flex-wrap">
+                    <a
+                      [routerLink]="'/' + locale + '/blog/' + article.slug"
+                      class="text-[#2a6496] text-base font-semibold hover:underline leading-snug"
+                    >
+                      {{ article.title }}
+                    </a>
+                    @if (article.pin) {
+                      <span class="inline-flex items-center rounded-full border border-amber-200 bg-amber-100 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-amber-800">
+                        Pinned
+                      </span>
+                    }
+                  </div>
                   <!-- Author & date row -->
                   <div class="flex items-center justify-between mt-1">
                     <p class="text-xs text-gray-500">
@@ -75,30 +82,38 @@ import { truncate } from '../utils/utils';
   `,
   styles: [`:host { display: block; }`],
 })
-export class BlogPostRowsComponent implements OnInit {
+export class BlogPostRowsComponent implements OnChanges {
   @Input() articles: any[] = [];
   @Input() locale = 'en';
 
   search = signal('');
   truncateText = truncate;
 
-  private allArticles: any[] = [];
+  private allArticles = signal<any[]>([]);
 
   filteredResults = computed(() => {
     const term = this.search().toLowerCase().trim();
-    if (!term) return this.allArticles;
-    return this.allArticles.filter((article: any) =>
+    if (!term) return this.allArticles();
+    return this.allArticles().filter((article: any) =>
       article.title?.toLowerCase().includes(term)
     );
   });
 
-  ngOnInit() {
-    this.allArticles = this.articles || [];
+  ngOnChanges(changes: SimpleChanges) {
+    if (changes['articles']) {
+      this.allArticles.set(this.articles || []);
+    }
   }
 
   onSearch(event: Event) {
     const value = (event.target as HTMLInputElement).value;
     this.search.set(value);
+  }
+
+  getRowClass(article: any): string {
+    const baseClass = 'py-6';
+    const pinnedClass = 'rounded-md border border-amber-200 bg-amber-50/50 px-3';
+    return article?.pin ? `${baseClass} ${pinnedClass}` : baseClass;
   }
 
   relativeDate(dateStr: string): string {

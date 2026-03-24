@@ -59,12 +59,23 @@ import { strapiImage } from '../../utils/utils';
           </p>
         }
 
-        <!-- Sort dropdown -->
-        <div class="flex justify-end mb-4">
+        <!-- Category + Sort dropdowns -->
+        <div class="flex justify-end gap-3 mb-4 flex-wrap">
+          <select
+            [value]="selectedCategory()"
+            (change)="onCategoryChange($event)"
+            class="text-sm border border-gray-300 rounded px-3 py-1.5 text-gray-700 bg-white focus:outline-none focus:ring-1 focus:ring-[#7a9e8e] min-w-44"
+          >
+            <option [value]="ALL_CATEGORIES_VALUE">{{ ALL_CATEGORIES_LABEL }}</option>
+            @for (category of availableCategories(); track category.value) {
+              <option [value]="category.value">{{ category.label }}</option>
+            }
+          </select>
+
           <select
             [value]="sortOrder()"
             (change)="onSortChange($event)"
-            class="text-sm border border-gray-300 rounded px-3 py-1.5 text-gray-700 bg-white focus:outline-none focus:ring-1 focus:ring-[#7a9e8e]"
+            class="text-sm border border-gray-300 rounded px-3 py-1.5 text-gray-700 bg-white focus:outline-none focus:ring-1 focus:ring-[#7a9e8e] min-w-32"
           >
             <option value="most_recent">Most Recent</option>
             <option value="oldest">Oldest</option>
@@ -80,22 +91,66 @@ import { strapiImage } from '../../utils/utils';
   `,
 })
 export class BlogListComponent implements OnInit {
+  readonly ALL_CATEGORIES_VALUE = 'all';
+  readonly ALL_CATEGORIES_LABEL = 'All Categories';
+
   pageData: any = null;
   allArticles = signal<any[]>([]);
+  selectedCategory = signal<string>(this.ALL_CATEGORIES_VALUE);
   featuredItems: any[] = [];
   bannerImageUrl: string | null = null;
   locale = 'en';
 
   sortOrder = signal<string>('most_recent');
 
-  sortedArticles = computed(() => {
-    const arts = [...this.allArticles()];
-    if (this.sortOrder() === 'oldest') {
-      arts.sort((a, b) => new Date(a.publishedAt).getTime() - new Date(b.publishedAt).getTime());
-    } else {
-      arts.sort((a, b) => new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime());
+  availableCategories = computed(() => {
+    const categoryMap = new Map<string, string>();
+
+    for (const article of this.allArticles()) {
+      for (const category of article?.categories || []) {
+        const label = (category?.name || '').trim();
+        const normalized = this.normalizeCategoryName(label);
+        if (!normalized || categoryMap.has(normalized)) {
+          continue;
+        }
+
+        categoryMap.set(normalized, label);
+      }
     }
-    return arts;
+
+    return [...categoryMap.entries()]
+      .sort((a, b) => a[1].localeCompare(b[1], undefined, { sensitivity: 'base' }))
+      .map(([value, label]) => ({ value, label }));
+  });
+
+  categoryFilteredArticles = computed(() => {
+    const selectedCategory = this.selectedCategory();
+
+    if (selectedCategory === this.ALL_CATEGORIES_VALUE) {
+      return this.allArticles();
+    }
+
+    return this.allArticles().filter(article =>
+      (article?.categories || []).some((category: any) =>
+        this.normalizeCategoryName(category?.name) === selectedCategory
+      )
+    );
+  });
+
+  sortedArticles = computed(() => {
+    const arts = [...this.categoryFilteredArticles()];
+    const pinned = arts
+      .filter(article => article?.pin === true)
+      .sort((a, b) => this.compareByMostRecent(a, b));
+    const regular = arts.filter(article => article?.pin !== true);
+
+    if (this.sortOrder() === 'oldest') {
+      regular.sort((a, b) => this.compareByOldest(a, b));
+    } else {
+      regular.sort((a, b) => this.compareByMostRecent(a, b));
+    }
+
+    return [...pinned, ...regular];
   });
 
   private route = inject(ActivatedRoute);
@@ -110,6 +165,57 @@ export class BlogListComponent implements OnInit {
 
   onSortChange(event: Event) {
     this.sortOrder.set((event.target as HTMLSelectElement).value);
+  }
+
+  onCategoryChange(event: Event) {
+    this.selectedCategory.set((event.target as HTMLSelectElement).value);
+  }
+
+  private compareByMostRecent(a: any, b: any): number {
+    return this.getPublishedTimestamp(b) - this.getPublishedTimestamp(a);
+  }
+
+  private compareByOldest(a: any, b: any): number {
+    return this.getPublishedTimestamp(a) - this.getPublishedTimestamp(b);
+  }
+
+  private getPublishedTimestamp(article: any): number {
+    const publishedAt = Date.parse(article?.publishedAt ?? '');
+    if (!Number.isNaN(publishedAt)) {
+      return publishedAt;
+    }
+
+    const createdAt = Date.parse(article?.createdAt ?? '');
+    if (!Number.isNaN(createdAt)) {
+      return createdAt;
+    }
+
+    return 0;
+  }
+
+  private normalizeCategoryName(name: string | null | undefined): string {
+    return (name || '').trim().toLocaleLowerCase();
+  }
+
+  private ensureSelectedCategoryIsAvailable(articles: any[]) {
+    const selected = this.selectedCategory();
+    if (selected === this.ALL_CATEGORIES_VALUE) {
+      return;
+    }
+
+    const availableCategories = new Set<string>();
+    for (const article of articles) {
+      for (const category of article?.categories || []) {
+        const normalized = this.normalizeCategoryName(category?.name);
+        if (normalized) {
+          availableCategories.add(normalized);
+        }
+      }
+    }
+
+    if (!availableCategories.has(selected)) {
+      this.selectedCategory.set(this.ALL_CATEGORIES_VALUE);
+    }
   }
 
   ngOnInit() {
@@ -133,6 +239,7 @@ export class BlogListComponent implements OnInit {
         ? (articles || [])
         : (articles || []).filter((article: any) => !article?.premium);
       this.allArticles.set(visibleArticles);
+      this.ensureSelectedCategoryIsAvailable(visibleArticles);
       this.featuredItems = pageData?.featured_content_items || [];
 
       // Resolve banner image
@@ -162,4 +269,3 @@ export class BlogListComponent implements OnInit {
     }
   }
 }
-

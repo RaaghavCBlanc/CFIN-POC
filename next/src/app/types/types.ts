@@ -41,6 +41,7 @@ export interface Article {
   locale: string;
   image: Image;
   categories: Category[];
+  pin?: boolean;
 }
 
 export interface Product {
